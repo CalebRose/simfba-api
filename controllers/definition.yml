@@ -1,0 +1,196 @@
+swagger: '2.0'
+info:
+  description: |
+    SimFBA API
+  version: 1.0.0
+  title: SimFBA API
+tags:
+- name: roster
+  description: Rosters
+- name: depthchart
+  description: Depth Chart
+- name: recruiting
+  description: Recruiting
+# schemes:
+# - http
+paths:
+  /rosters:
+    get:
+      tags:
+        - roster
+      summary: Gets all team rosters
+      operationId: getTeamRosters
+      produces:
+      - application/json
+      - application/xml
+      parameters: []
+      responses:
+        default:
+          description: successful operation
+  /roster/{teamId}:
+    get:
+      tags:
+        - roster
+      summary: Gets a single team roster
+      operationId: getSingleRoster
+      produces:
+      - application/json
+      - application/xml
+      parameters:
+      - name: teamId
+        in: path
+        description: ID of team to retrive roster of
+        required: true
+        type: integer
+      responses:
+        default:
+          description: successful operation
+  /depthchart/{teamId}:
+    get:
+      tags:
+        - depthchart
+      summary: Gets the user team depth chart
+      operationId: getDepthChart
+      produces:
+      - application/json
+      parameters:
+      - name: teamId
+        in: path
+        description: ID of team to retrive depth chart of
+        required: true
+        type: integer
+      responses:
+        default:
+          description: successful operation
+    post:
+      tags:
+        - depthchart
+      summary: Update the user team depth chart
+      operationId: updateDepthChart
+      consumes:
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      parameters:
+      - name: teamId
+        in: path
+        description: ID of team to team depth chart to update
+        required: true
+        type: integer
+      - name: playerId
+        in: formData
+        description: PlayerId of Player to Assign to Position / lineup
+        required: true
+        type: integer
+      - name: starting
+        in: formData
+        description: Setting player to start or not
+        required: true
+        type: boolean
+      responses:
+        default:
+          description: successful operation
+        405:
+          description: Invalid input
+  /recruiting/{teamId}:
+    get:
+      tags:
+        - recruiting
+      summary: get the current team's recruits as well as all unrecruited prospects 
+      parameters:
+      - name: teamId
+        in: path
+        description: ID of team to team depth chart to update
+        required: true
+        type: integer
+      responses:
+        default:
+          description: successful operation
+    post:
+      tags:
+        - recruiting
+      summary: Create an offer for the specified team for a designated player
+      operationId: Create an offer for a player
+      consumes:
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      parameters:
+      - name: teamId
+        in: path
+        description: ID of team to team depth chart to update
+        required: true
+        type: integer
+      - name: playerId
+        in: formData
+        description: PlayerId to make offer for
+        required: true
+        type: integer
+      - name: points
+        in: formData
+        description: Number of Points to spend if offer is accepted
+        required: true
+        type: integer
+      responses:
+        default:
+          description: successful operation
+  /recruiting/{offerId}/{teamId}:
+    delete:
+      tags:
+        - recruiting
+      summary: Delete an existing offer
+      parameters:
+      - name: teamId
+        in: path
+        description: ID of team to team depth chart to update
+        required: true
+        type: integer
+      - name: offerId
+        in: path
+        description: ID of offer to delete
+        required: true
+        type: integer
+      responses:
+        default:
+          description: successful operation
+    put:
+      tags:
+        - recruiting
+      summary: Uupdate the points allocated to an existing offer        
+      parameters:
+      - name: teamId
+        in: path
+        description: ID of team to team depth chart to update
+        required: true
+        type: integer
+      - name: offerId
+        in: path
+        description: ID of offer to delete
+        required: true
+        type: integer
+      responses:
+        default:
+          description: successful operation
+  /recruiting/offers/{teamId}:
+    get:
+      tags:
+        - recruiting
+      summary: get the user\'s team\'s currently open offers as well as all that team\'s resolved offers that were resolved within the last X days.
+      parameters:
+      - name: teamId
+        in: path
+        description: ID of team to retrieve offers of.
+        required: true
+        type: integer
+      responses:
+        default:
+          description: successful operation
+externalDocs:
+  description: SimFBA API Definition
+  url: https://app.asana.com/0/730649358053886/list
+# Added by API Auto Mocking Plugin
+host: virtserver.swaggerhub.com
+basePath: /simfba/SimFBA/1.0.0
+schemes:
+ - https
+ - http

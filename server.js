@@ -1,11 +1,18 @@
 const express = require("express");
+const routes = require("./controllers");
 const db = require("./models");
 
 const PORT = process.env.PORT || 3001;
 const app = express();
 
-db.sequelize.sync().then(function() {
-    app.listen(PORT, function() {
-        console.log("Listening on port %s", PORT);
+// Define middleware 
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
+app.use(routes);
+
+db.sequelize.sync({ force: false }).then(() => {
+    app.listen(PORT, () => {
+      console.log(`🌎  ==> API Server now listening on PORT ${PORT}!`);
     });
 });

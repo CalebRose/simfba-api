@@ -6,8 +6,9 @@ router.get("/rosters", function(req, res) {
     res.status(200).send();
 });
 
-router.get("/roster", function(req, res) {
+router.get("/roster/:teamId", function(req, res) {
     console.log("roster route hit");
+    console.log("for teamId:", req.params.teamId);
     res.status(200).send();
 });
 

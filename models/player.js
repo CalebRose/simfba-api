@@ -50,5 +50,6 @@ module.exports = function(sequelize, DataTypes) {
         workEthic: DataTypes.STRING,
         freeAgent: DataTypes.STRING
     });
+    // return new Promise(() => Player);
     return Player;
 }

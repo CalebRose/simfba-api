@@ -25,5 +25,8 @@
   "bugs": {
     "url": "https://gitlab.com/steven.payne.long/simfba-api/issues"
   },
-  "homepage": "https://gitlab.com/steven.payne.long/simfba-api#readme"
+  "homepage": "https://gitlab.com/steven.payne.long/simfba-api#readme",
+  "devDependencies": {
+    "sequelize-cli": "^6.2.0"
+  }
 }

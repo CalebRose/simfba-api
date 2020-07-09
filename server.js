@@ -11,7 +11,7 @@ app.use(express.json());
 
 app.use(routes);
 
-db.sequelize.sync({ force: false }).then(() => {
+db.sequelize.sync({ force: true }).then(() => {
     app.listen(PORT, () => {
       console.log(`🌎  ==> API Server now listening on PORT ${PORT}!`);
     });

@@ -14,11 +14,15 @@ const generateEntries = (keystrArr, rowData) => {
     const splitRows = rowData.map((x) => x.split(",").filter(x => x.length > 0));
     const entriesArray = splitRows.map((x) => {
         if (x.length === keystrArr.length) {
-            return x.map((y, i) => [keystrArr[i].replace(" ", "_"), (parseInt(y) ? parseInt(y) : y)]);
+            const xEntries = x.map((y, i) => [keystrArr[i].replace(" ", "_"), (parseInt(y) ? parseInt(y) : y)]);
+            xEntries.push(["createdAt", currentDateString]);
+            xEntries.push(["updatedAt", currentDateString]);
+            return xEntries;
         }
         else
             return [];
     });
+    // console.log(entriesArray);
     return entriesArray;
 };
 const getFilePaths = (dir) => {
@@ -42,6 +46,7 @@ allFilePaths.forEach((pathNameObj) => {
             if (rowData) {
                 const entries = generateEntries(keyNames, rowData).filter(x => x.length > 0);
                 const objArr = entries.map(x => Object.fromEntries(x));
+                console.log(objArr);
                 try {
                     fs.mkdirSync("./seeders/", { recursive: true });
                     const filename = currentDateString + "-" + pathNameObj.filename + ".js";
@@ -52,9 +57,10 @@ allFilePaths.forEach((pathNameObj) => {
 
                         module.exports = {
                             up: (queryInterface, Sequelize) => {
-                                return queryInterface.bulkInsert("players", ${JSON.stringify(objArr)}, {});
+                                return queryInterface.bulkInsert("${pathNameObj.filename.slice(0, pathNameObj.filename.lastIndexOf("."))}", ${JSON.stringify(objArr)}, {});
                             }
-                        }
+                        };
+
                     `;
 
                     fs.writeFile("./seeders/" + filename, fileTemplate, (err) => {

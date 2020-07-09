@@ -6,7 +6,11 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
-    "ts": "tsc --project tsconfig-ts-scripts.json"
+    "ts": "tsc --project tsconfig-ts-scripts.json",
+    "seed": "npm run genseed && npm run seeddb",
+    "genseed": "node .\\scripts\\js\\seedobjectGenerator.js",
+    "newseed": "sequelize seed:generate --config .\\config\\config.json --name newSeed",
+    "seeddb": "sequelize db:seed:all"
   },
   "dependencies": {
     "body-parser": "^1.19.0",

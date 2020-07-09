@@ -2,3 +2,4 @@ config.json
 *.js
 /data/*.json
 /node_modules
+sequelize-data.json

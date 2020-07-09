@@ -2,6 +2,8 @@
 
 ## API Server Routes
 
+These routes need to be updated to match what is in Swagger.
+
 ```
 router.get("/admin/requests", function(req, res) {...})
 router.post("/admin/request/:request_id", function(req, res) {...})

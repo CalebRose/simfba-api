@@ -35,18 +35,29 @@ const getFilePaths = (dir) => {
     });
     return filePaths;
 };
+
+
+// const createModelIfNeeded = (filename: string, keyNames: string[]) => {
+//     // check if file not exist, if it doesn't then create it based on keynames
+//     console.log("generating model for " + filename + " from keyNames");
+//     // console.log(keyNames);
+//     console.log("models directory contents:\n");
+//     console.log(fs.readdirSync("models/"));
+// }
+
 const allFilePaths = getFilePaths("./data/");
 allFilePaths.forEach((pathNameObj) => {
     try {
         const filestring = getFileAsString(pathNameObj.fullpath);
         const keyNameStr = filestring.split("\r\n", 1).join("");
-        const keyNames = keyNameStr.split(",").filter(x => x.length > 0);
+        const keyNames: string[] = keyNameStr.split(",").filter((x: string) => x.length > 0);
         if (keyNames) {
             const rowData = filestring.split("\r\n").slice(1);
             if (rowData) {
                 const entries = generateEntries(keyNames, rowData).filter(x => x.length > 0);
                 const objArr = entries.map(x => Object.fromEntries(x));
-                console.log(objArr);
+                // console.log(objArr);
+                // createModelIfNeeded(pathNameObj.filename, keyNames); // if model doesn't exist, generate it from keynames
                 try {
                     fs.mkdirSync("./seeders/", { recursive: true });
                     const filename = currentDateString + "-" + pathNameObj.filename + ".js";

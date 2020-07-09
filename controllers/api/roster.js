@@ -3,8 +3,8 @@ const db = require("../../models");
 
 router.get("/rosters", function(req, res) {
     console.log("rosters route hit");
-    db.Roster.findAll({}).then((rosters) => {
-        res.status(200).send(rosters);
+    db.Player.findAll({}).then((players) => {
+        res.status(200).send(players);
     });
 });
 

@@ -36,14 +36,37 @@ const getFilePaths = (dir) => {
     return filePaths;
 };
 
+const createModelIfNeeded = (pathNameObj, keyNames: string[], tableDataObj: {}) => {
+    const createModel = () => {
+        console.log("generating model for " + pathNameObj.filename + " from keyNames");
+        console.log("keyNames", keyNames);
+        // console.log("tableData first row", tableDataObj[0]);
+        // console.log("tableData first row, first two items:");
+        // console.log("Id:", tableDataObj[0].Id);
+        // console.log("Typeof Id:", typeof tableDataObj[0].Id);
+        // console.log("First_Name:", tableDataObj[0].First_Name);
+        // console.log("Typeof First_Name:", typeof tableDataObj[0].First_Name);
+        // console.log(tableDataObj[0].entries);
 
-// const createModelIfNeeded = (filename: string, keyNames: string[]) => {
-//     // check if file not exist, if it doesn't then create it based on keynames
-//     console.log("generating model for " + filename + " from keyNames");
-//     // console.log(keyNames);
-//     console.log("models directory contents:\n");
-//     console.log(fs.readdirSync("models/"));
-// }
+        // the general idea is to iterate over the keynames and create the entries for the model object. The type will be determined by iterating down the rows for that column until a datum is encountered, at which time type is inferred
+        // if it is never encountered, it should default to something, probably string or boolean
+        const modelObj = Object.fromEntries(keyNames.map((colName: string) => {
+            const dataType: "string" | "number" = undefined;
+            return [colName.replace(" ", "_"), dataType];
+        }));
+
+        console.log(modelObj);
+
+    };
+    const modelFiles = fs.readdirSync("models/").filter((filename: string) => !(filename === "index.js")).filter((filen: string) => {
+        const dirFilename = filen.slice(0, filen.lastIndexOf("."));
+        const dataFileName = pathNameObj.filename.slice(0, filen.lastIndexOf("."));
+        return dirFilename === dataFileName; // to do: account for pluralization and capitalization
+    });
+    if (modelFiles.length === 1) { // there should be just 1 if it exists, so if it doesnt exist, create it
+        createModel();
+    }
+}
 
 const allFilePaths = getFilePaths("./data/");
 allFilePaths.forEach((pathNameObj) => {
@@ -56,8 +79,7 @@ allFilePaths.forEach((pathNameObj) => {
             if (rowData) {
                 const entries = generateEntries(keyNames, rowData).filter(x => x.length > 0);
                 const objArr = entries.map(x => Object.fromEntries(x));
-                // console.log(objArr);
-                // createModelIfNeeded(pathNameObj.filename, keyNames); // if model doesn't exist, generate it from keynames
+                createModelIfNeeded(pathNameObj, keyNames, objArr); // if model doesn't exist, generate it from keynames
                 try {
                     fs.mkdirSync("./seeders/", { recursive: true });
                     const filename = currentDateString + "-" + pathNameObj.filename + ".js";

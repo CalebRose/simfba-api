@@ -1,5 +1,5 @@
 config.json
-*.js
+scripts/js/**/*
 /data/*.json
 /node_modules
 sequelize-data.json

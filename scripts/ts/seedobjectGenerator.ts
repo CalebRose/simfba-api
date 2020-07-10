@@ -15,8 +15,8 @@ const generateEntries = (keystrArr, rowData) => {
     const entriesArray = splitRows.map((x) => {
         if (x.length === keystrArr.length) {
             const xEntries = x.map((y, i) => [keystrArr[i].replace(" ", "_"), (parseInt(y) ? parseInt(y) : y)]);
-            xEntries.push(["createdAt", currentDateString]);
-            xEntries.push(["updatedAt", currentDateString]);
+            // xEntries.push(["createdAt", currentDateString]);
+            // xEntries.push(["updatedAt", currentDateString]);
             return xEntries;
         }
         else
@@ -64,16 +64,13 @@ allFilePaths.forEach((pathNameObj) => {
                     console.log("Writing out seed file:", filename);
 
                     const fileTemplate = `
-                        'use strict';
-
-                        module.exports = {
-                            up: (queryInterface, Sequelize) => {
-                                return queryInterface.bulkInsert("${pathNameObj.filename.slice(0, pathNameObj.filename.lastIndexOf("."))}", ${JSON.stringify(objArr)}, {});
-                            }
-                        };
-
-                    `;
-
+'use strict';
+module.exports = {
+    up: (queryInterface, Sequelize) => {
+        return queryInterface.bulkInsert("${pathNameObj.filename.slice(0, pathNameObj.filename.lastIndexOf("."))}", ${JSON.stringify(objArr)}, {});
+    }
+};
+`;
                     fs.writeFile("./seeders/" + filename, fileTemplate, (err) => {
                         if (err) {
                             throw err;

@@ -41,7 +41,9 @@ module.exports = function(sequelize, DataTypes) {
         Work_Ethic: DataTypes.STRING,
         Progression: DataTypes.INTEGER,
         Potential: DataTypes.STRING,
-        Year: DataTypes.INTEGER
+        Year: DataTypes.INTEGER,
+        createdAt: DataTypes.STRING,
+        updatedAt: DataTypes.STRING
     });
     // return new Promise(() => Player);
     return Player;

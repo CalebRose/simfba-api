@@ -103,10 +103,10 @@ const allFilePaths = getFilePaths("./data/");
 allFilePaths.forEach((pathNameObj) => {
     try {
         const filestring = getFileAsString(pathNameObj.fullpath);
-        const keyNameStr = filestring.split("\r\n", 1).join("");
+        const keyNameStr = filestring.split(/\r?\n/, 1).join("");
         const keyNames: string[] = keyNameStr.split(",").filter((x: string) => x.length > 0);
         if (keyNames) {
-            const rowData = filestring.split("\r\n").slice(1);
+            const rowData = filestring.split(/\r?\n/).slice(1);
             if (rowData) {
                 const entries = generateEntries(keyNames, rowData).filter(x => x.length > 0);
                 const objArr = entries.map(x => Object.fromEntries(x));

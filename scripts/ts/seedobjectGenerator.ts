@@ -13,7 +13,7 @@ const getFileAsString = (filePathStr) => {
 };
 
 const generateEntries = (keystrArr, rowData) => {
-    const splitRows = rowData.map((x) => x.split(",").filter(x => x.length > 0));
+    const splitRows = rowData.map((x) => x.split(","));
     const entriesArray = splitRows.map((x) => {
         if (x.length === keystrArr.length) {
             const xEntries = x.map((y, i) => [keystrArr[i].replace(" ", "_"), (parseInt(y) ? parseInt(y) : y)]);
@@ -103,13 +103,17 @@ const allFilePaths = getFilePaths("./data/");
 allFilePaths.forEach((pathNameObj) => {
     try {
         const filestring = getFileAsString(pathNameObj.fullpath);
-        const keyNameStr = filestring.split(/\r?\n/, 1).join("");
-        const keyNames: string[] = keyNameStr.split(",").filter((x: string) => x.length > 0);
+        const keyNameStr = filestring.split(/\r?\n/, 1)[0];
+        const keyNames: string[] = keyNameStr.split(",");
         if (keyNames) {
             const rowData = filestring.split(/\r?\n/).slice(1);
-            if (rowData) {
+            if (rowData.length > 0) {
+                // console.log("keyNames", keyNames);
+                // console.log("rowdata:", rowData);
                 const entries = generateEntries(keyNames, rowData).filter(x => x.length > 0);
+                // console.log("entries:", entries);
                 const objArr = entries.map(x => Object.fromEntries(x));
+                // console.log("objArr:", objArr);
                 createModelIfNeeded(pathNameObj, keyNames, objArr); // if model doesn't exist, generate it from keynames. If this branch executes, don't create seedfile, just create model. Otherwise create model.
                 try {
                     fs.mkdirSync("./seeders/", { recursive: true });

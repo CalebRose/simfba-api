@@ -16,8 +16,7 @@ const generateEntries = (keystrArr, rowData) => {
     const splitRows = rowData.map((rowStr) => rowStr.split(","));
     const entriesArray = splitRows.map((row) => {
         if (row.length === keystrArr.length) {
-            // const xEntries = row.map((y, i) => [keystrArr[i].replace(" ", "_"), (parseInt(y) ? parseInt(y) : y)]);
-            const xEntries = row.map((y, i) => [keystrArr[i], (parseInt(y) ? parseInt(y) : typeof y === "string" ? y.localeCompare("TRUE") === 0 ? true : y.localeCompare("FALSE") === 0 ? false : y : y)]);
+            const xEntries = row.map((y, i) => [keystrArr[i], (parseInt(y) ? parseInt(y) : typeof y === "string" ? y.localeCompare("TRUE") === 0 ? true : y.localeCompare("FALSE") === 0 ? false : y.length === 0 ? null : y : y)]);
             return xEntries;
         }
         else
@@ -38,33 +37,26 @@ const getFilePaths = (dir) => {
 
 const createModelIfNeeded = (pathNameObj, keyNames: string[], tableDataObj: {}) => {
     const createModel = () => {
-        console.log("keynames for model " + pathNameObj.filename + ":\t" + keyNames);
+        console.log("\n\t\tCreating Model:\t" + pathNameObj.filename);
+        console.log("\nColumn names:\t" + keyNames + "\n");
         const inferColumnType = (i: number) => {
-            console.log("\ninfer column type of column:");
-            console.log(keyNames[i]);
             for (let x in tableDataObj) {
-                // if parseInt is a number(i.e., a value instead of NaN) and typeof is a number, use DataTypes.INTEGER. Otherwise default to DataTypes.STRING
                 const val = tableDataObj[x][keyNames[i]];
                 if (val) {
-                    console.log("Value:\t", val);
-                    console.log("typeof:\t", typeof val);
-                    // if (typeof val === "string" && (val.localeCompare("TRUE") === 0 || val.localeCompare("FALSE") === 0)) {
-                    //     console.log("inferred type: Boolean")
-                    //     return "TINYINT(1)";
-                    // } else {
+                    if (typeof val === "string" && (val.localeCompare("TRUE") === 0 || val.localeCompare("FALSE") === 0)) {
+                        console.log("Inferred type of column " + keyNames[i] + ": boolean / TINYINT(1)");
+                        return "TINYINT(1)";
+                    } else {
                         const inferredType = parseInt(val) && typeof val === "number" ? "INTEGER" : "VARCHAR(255)" ;
                         console.log("Inferred type of column " + keyNames[i] + ": " + inferredType);
                         return inferredType;
-                        // }
+                    }
                 } else if (typeof val === "boolean") {
-                    console.log("Inferred type of column " + keyNames[i] + ": boolean");
+                    console.log("Inferred type of column " + keyNames[i] + ": boolean / TINYINT(1)");
                     return "TINYINT(1)";
                 } 
-            //     else {
-            //         console.log("skipping falsy val:", val, " typeof:", typeof val);
-            //    }
-            }
-            console.log("All values are falsy. Inferring String / Varchar as default");
+            } // add colors to these log outs for column names and types.
+            console.log("\tColumn " + keyNames[i] + ":\tAll values are falsy (but not boolean false). Type could not be inferred because there are no non-null or non-undefined values for this column. Inferring String / Varchar as default");
             return "VARCHAR(255)"; // fall through if all values are falsy in the column
 
         };
@@ -97,7 +89,7 @@ const createModelIfNeeded = (pathNameObj, keyNames: string[], tableDataObj: {}) 
 
         try {
             const filename = pathNameObj.filename.slice(0, pathNameObj.filename.lastIndexOf(".")) + ".js";
-            console.log("Writing out model file:", filename);
+            console.log("\n\tWriting out model file:", filename);
 
             fs.writeFile("./models/" + filename, modelFileTemplate, (err) => {
                 if (err) {
@@ -110,20 +102,77 @@ const createModelIfNeeded = (pathNameObj, keyNames: string[], tableDataObj: {}) 
         }
 
     };
-    const modelFiles = fs.readdirSync("models/").filter((filename: string) => !(filename === "index.js")).filter((filen: string) => { // still need to add function to create models/index.js if needed.
+
+    const modelFiles = fs.readdirSync("models/");
+
+    const filteredFiles = modelFiles.filter((filen: string) => { // still need to add function to create models/index.js if needed.
         const dirFilename = filen.slice(0, filen.lastIndexOf("."));
         const dataFileName = pathNameObj.filename.slice(0, filen.lastIndexOf("."));
-        return dirFilename === dataFileName; // to do: account for pluralization and capitalization
+        return dirFilename === dataFileName; // to do: account for pluralization and capitalization. Also, this may be an invalid way to compare the value of these strings
     });
-    if (modelFiles.length === 0) { // there should be just 1 if it exists, so if it doesnt exist, create it
+    if (filteredFiles.length === 0) { // there should be just 1 if it exists, so if it doesnt exist, create it
         createModel();
         return true;
-    } else if (modelFiles.length === 1 ){
+    } else if (filteredFiles.length === 1 ){
         console.log("model for " + pathNameObj.filename + " exists. Skipping model generation.");
         return false;
     } else {
         console.log("Something unexpected happened");
         return undefined;
+    }
+}
+
+if (fs.readdirSync("models/").filter((modelFileName: string) => modelFileName.localeCompare("index.js") === 0).length === 0) { // then there is no models/index.js file so create it.
+    const indexFileCode = `
+'use strict';
+
+const fs = require('fs');
+const path = require('path');
+const Sequelize = require('sequelize');
+const basename = path.basename(__filename);
+const env = process.env.NODE_ENV || 'development';
+const config = require(__dirname + './../config/config.json')[env];
+const db = {};
+
+let sequelize;
+if (config.use_env_variable) {
+    sequelize = new Sequelize(process.env[config.use_env_variable], config);
+} else {
+    sequelize = new Sequelize(config.database, config.username, config.password, config);
+}
+
+fs
+    .readdirSync(__dirname)
+    .filter(file => {
+    return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js');
+    })
+    .forEach(file => {
+    const model = sequelize['import'](path.join(__dirname, file));
+    db[model.name] = model;
+    });
+
+Object.keys(db).forEach(modelName => {
+    if (db[modelName].associate) {
+    db[modelName].associate(db);
+    }
+});
+
+db.sequelize = sequelize;
+db.Sequelize = Sequelize;
+
+module.exports = db;
+    `;
+    
+    try {
+        console.log("\n\tWriting out models/index.js.");
+        fs.writeFile("./models/index.js", indexFileCode, (err) => {
+            if (err) {
+                throw err;
+            }
+        });
+    }
+    catch (err) {
+        console.error(err);
     }
 }
 
@@ -138,7 +187,7 @@ allFilePaths.forEach((pathNameObj) => {
             if (rowData.length > 0) {
                 // console.log("keyNames", keyNames); // activate these log outs for debugging data imports.
                 // console.log("rowdata:", rowData);
-                const entries = generateEntries(keyNames, rowData).filter(x => x.length > 0);
+                const entries = generateEntries(keyNames, rowData).filter(x => x.length > 0);  // is this filter really needed?
                 // console.log("entries:", entries);
                 const objArr = entries.map(x => Object.fromEntries(x));
                 // console.log("objArr:", objArr);

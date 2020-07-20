@@ -123,8 +123,7 @@ const createModelIfNeeded = (pathNameObj, keyNames: string[], tableDataObj: {}) 
 }
 
 if (fs.readdirSync("models/").filter((modelFileName: string) => modelFileName.localeCompare("index.js") === 0).length === 0) { // then there is no models/index.js file so create it.
-    if (fs.readdirSync("models/").filter((modelFileName: string) => modelFileName.localeCompare("index.js") === 0).length === 0) { // then there is no models/index.js file so create it.
-        const indexFileCode = `
+    const indexFileCode = `
 'use strict';
 
 const fs = require('fs');
@@ -162,21 +161,19 @@ db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
 module.exports = db;
-        `;
+    `;
     
-        try {
-            console.log("\n\tWriting out models/index.js.");
-            fs.writeFile("./models/index.js", indexFileCode, (err) => {
-                if (err) {
-                    throw err;
-                }
-            });
-        }
-        catch (err) {
-            console.error(err);
-        }
-    
-    };
+    try {
+        console.log("\n\tWriting out models/index.js.");
+        fs.writeFile("./models/index.js", indexFileCode, (err) => {
+            if (err) {
+                throw err;
+            }
+        });
+    }
+    catch (err) {
+        console.error(err);
+    }
 }
 
 const allFilePaths = getFilePaths("./data/");
@@ -188,12 +185,12 @@ allFilePaths.forEach((pathNameObj) => {
         if (keyNames) {
             const rowData = filestring.split(/\r?\n/).slice(1);
             if (rowData.length > 0) {
-                console.log("keyNames", keyNames); // activate these log outs for debugging data imports.
-                console.log("rowdata:", rowData);
+                // console.log("keyNames", keyNames); // activate these log outs for debugging data imports.
+                // console.log("rowdata:", rowData);
                 const entries = generateEntries(keyNames, rowData).filter(x => x.length > 0);  // is this filter really needed?
-                console.log("entries:", entries);
+                // console.log("entries:", entries);
                 const objArr = entries.map(x => Object.fromEntries(x));
-                console.log("objArr:", objArr);
+                // console.log("objArr:", objArr);
                 if (createModelIfNeeded(pathNameObj, keyNames, objArr)) { // if model doesn't exist, generate it from keynames. If this branch executes, don't create seedfile, just create model. Otherwise create model.
                     console.log("model created for " + pathNameObj.filename + ". Skipping seeder for now because you may need to create table. Rerun this process to create seed file.");
                 } else {

@@ -2,6 +2,10 @@ const router = require("express").Router();
 const db = require("../../models");
 
 router.get("/rosters", function(req, res) {
+    // Temporary Headers -- due to running on different ports in dev environments
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
     console.log("rosters route hit");
     db.Player.findAll({}).then((players) => {
         res.status(200).send(players);

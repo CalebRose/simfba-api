@@ -10,7 +10,9 @@
     "seed": "npm run genseed && npm run seeddb",
     "genseed": "node .\\scripts\\js\\seedobjectGenerator.js",
     "newseed": "sequelize seed:generate --config .\\config\\config.json --name newSeed",
-    "seeddb": "sequelize db:seed:all"
+    "seeddb": "sequelize db:seed:all",
+    "cleanup-models": "Remove-Item .\\models\\ -Recurse",
+    "testing": "Write-Host 'this is only a test'"
   },
   "dependencies": {
     "body-parser": "^1.19.0",

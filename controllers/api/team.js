@@ -1,22 +1,15 @@
 const router = require("express").Router();
 const db = require("../../models");
+// const { QueryTypes } = require('sequelize');
 
 const admin = require('firebase-admin');
 
-// the route api/rosters is being disabled because there are 25000 players, so its too much overhead to retrieve all players unfiltered.
-// router.get("/rosters", function(req, res) {
-//     // Temporary Headers -- due to running on different ports in dev environments
-//     res.header('Access-Control-Allow-Origin', '*');
-//     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-//     res.header('Access-Control-Allow-Headers', 'Content-Type');
-//     console.log("rosters route hit");
-//     db.Player.findAll({}).then((players) => {
-//         res.status(200).send(players);
-//     });
-// });
+router.get("/teams", function(req, res) {
 
-router.get("/roster/:teamId", function (req, res) {
-
+    db.Team.findAll({}).then((teams) => {
+        res.status(200).send(teams);
+    });
+    
     const idToken = req.headers.authorization.replace("Bearer ", "");
     console.log(idToken, "idToken");
     
@@ -29,12 +22,8 @@ router.get("/roster/:teamId", function (req, res) {
             // res.header('Access-Control-Allow-Origin', 'localhost:3000');
             // res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
             // res.header('Access-Control-Allow-Headers', 'Content-Type');
-            db.Player.findAll({
-                where: {
-                    team: req.params.teamId
-                }
-            }).then((rosters) => {
-                res.status(200).send(rosters);
+            db.Team.findAll({}).then((teams) => {
+                res.status(200).send(teams);
             });
         }).catch(function (error) {
             // Handle error
@@ -42,6 +31,5 @@ router.get("/roster/:teamId", function (req, res) {
             res.status(403);
         });
 });
-
 
 module.exports = router;

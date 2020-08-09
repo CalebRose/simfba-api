@@ -3,6 +3,13 @@ const express = require("express");
 const routes = require("./controllers");
 const db = require("./models");
 
+const admin = require('firebase-admin');
+const serviceAccount = require("./config/service-account-file.json");
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: 'https://simfba-interface.firebaseio.com'
+});
+
 const PORT = process.env.PORT || 3001;
 const app = express();
 

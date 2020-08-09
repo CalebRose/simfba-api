@@ -1,5 +1,6 @@
 config.json
 service-account-file.json
+config/
 scripts/js/**/*
 /node_modules
 sequelize-data.json

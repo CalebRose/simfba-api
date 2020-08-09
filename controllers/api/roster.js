@@ -14,8 +14,11 @@ const db = require("../../models");
 // });
 
 router.get("/roster/:teamId", function(req, res) {
-    console.log("roster route hit");
-    console.log("for teamId:", req.params.teamId);
+    // console.log("roster route hit");
+    // console.log("for teamId:", req.params.teamId);
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
     db.Player.findAll({
         where: {
           team: req.params.teamId

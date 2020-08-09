@@ -1,0 +1,23 @@
+{
+  "files": {
+    "main.css": "/simfba-interface/static/css/main.585f7ae7.chunk.css",
+    "main.js": "/simfba-interface/static/js/main.db4dac1c.chunk.js",
+    "main.js.map": "/simfba-interface/static/js/main.db4dac1c.chunk.js.map",
+    "runtime-main.js": "/simfba-interface/static/js/runtime-main.5126bcb5.js",
+    "runtime-main.js.map": "/simfba-interface/static/js/runtime-main.5126bcb5.js.map",
+    "static/js/2.05150071.chunk.js": "/simfba-interface/static/js/2.05150071.chunk.js",
+    "static/js/2.05150071.chunk.js.map": "/simfba-interface/static/js/2.05150071.chunk.js.map",
+    "index.html": "/simfba-interface/index.html",
+    "precache-manifest.581a4cd3e91e1d427559b7b76927e6a7.js": "/simfba-interface/precache-manifest.581a4cd3e91e1d427559b7b76927e6a7.js",
+    "service-worker.js": "/simfba-interface/service-worker.js",
+    "static/css/main.585f7ae7.chunk.css.map": "/simfba-interface/static/css/main.585f7ae7.chunk.css.map",
+    "static/js/2.05150071.chunk.js.LICENSE.txt": "/simfba-interface/static/js/2.05150071.chunk.js.LICENSE.txt",
+    "static/media/style.css": "/simfba-interface/static/media/stadium.8e1480bb.jpg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.5126bcb5.js",
+    "static/js/2.05150071.chunk.js",
+    "static/css/main.585f7ae7.chunk.css",
+    "static/js/main.db4dac1c.chunk.js"
+  ]
+}

@@ -5,6 +5,7 @@ const { QueryTypes } = require('sequelize');
 const admin = require('firebase-admin');
 
 router.get("/depthchart/:teamId", function(req, res) {
+    const idToken = req.headers.authorization.replace('Bearer ', '');
     const getDepthCharts = async () => {
         const dc = await db.sequelize.query(
             `select * from database_development.depthcharts dc where dc.playerId in (select p.id from database_development.players p where p.Team = ${req.params.teamId})`,

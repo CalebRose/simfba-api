@@ -1,13 +1,13 @@
 const path = require('path');
-const express = require("express");
-const routes = require("./controllers");
-const db = require("./models");
+const express = require('express');
+const routes = require('./controllers');
+const db = require('./models');
 
 const admin = require('firebase-admin');
-const serviceAccount = require("./config/service-account-file.json");
+const serviceAccount = require('./config/service-account-file.json');
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: 'https://simfba-interface.firebaseio.com'
+  databaseURL: 'https://simfba-interface.firebaseio.com',
 });
 
 const PORT = process.env.PORT || 3001;
@@ -19,19 +19,19 @@ const app = express();
 //   databaseURL: 'https://simfba-interface.firebaseio.com'
 // });
 
-// Define middleware 
+// Define middleware
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static('build'))
+app.use(express.static('client/public'));
 app.use(express.json());
 
 app.use(routes);
 
-app.get('/:reqStr', function(req, res) {
-  res.sendFile(path.resolve(__dirname, 'build/' + req.params.reqStr));
+app.get('/:reqStr', function (req, res) {
+  res.sendFile(path.resolve(__dirname, 'client/public/' + req.params.reqStr));
 });
 
 db.sequelize.sync({ force: true }).then(() => {
-    app.listen(PORT, () => {
-      console.log(`🌎  ==> API Server now listening on PORT ${PORT}!`);
-    });
+  app.listen(PORT, () => {
+    console.log(`🌎  ==> API Server now listening on PORT ${PORT}!`);
+  });
 });

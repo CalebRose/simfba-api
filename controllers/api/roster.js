@@ -1,5 +1,5 @@
-const router = require("express").Router();
-const db = require("../../models");
+const router = require('express').Router();
+const db = require('../../models');
 
 const admin = require('firebase-admin');
 
@@ -15,33 +15,34 @@ const admin = require('firebase-admin');
 //     });
 // });
 
-router.get("/roster/:teamId", function (req, res) {
+router.get('/roster/:teamId', function (req, res) {
+  const idToken = req.headers.authorization.replace('Bearer ', '');
+  console.log(idToken, 'idToken');
+  admin
+    .auth()
+    .verifyIdToken(idToken)
+    .then(function (decodedToken) {
+      // res.header('Access-Control-Allow-Origin', '*');
+      // res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+      // res.header('Access-Control-Allow-Headers', 'Content-Type');
+      const uid = decodedToken.uid;
+      console.log('Token decoded');
+      console.log('uid:');
+      console.log(uid);
 
-    const idToken = req.headers.authorization.replace("Bearer ", "");
-    console.log(idToken, "idToken");
-    
-    admin.auth().verifyIdToken(idToken)
-        .then(function (decodedToken) {
-            const uid = decodedToken.uid;
-            console.log("Token decoded");
-            console.log("uid:");
-            console.log(uid);
-            // res.header('Access-Control-Allow-Origin', 'localhost:3000');
-            // res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-            // res.header('Access-Control-Allow-Headers', 'Content-Type');
-            db.Player.findAll({
-                where: {
-                    team: req.params.teamId
-                }
-            }).then((rosters) => {
-                res.status(200).send(rosters);
-            });
-        }).catch(function (error) {
-            // Handle error
-            console.log("Token NOT decoded. Something went wrong. Sending 403.");
-            res.status(403);
-        });
+      db.Player.findAll({
+        where: {
+          team: req.params.teamId,
+        },
+      }).then((rosters) => {
+        res.status(200).send(rosters);
+      });
+    })
+    .catch(function (error) {
+      // Handle error
+      console.log('Token NOT decoded. Something went wrong. Sending 403.');
+      res.status(403);
+    });
 });
-
 
 module.exports = router;

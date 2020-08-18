@@ -8,7 +8,20 @@ router.get("/depthchart/:teamId", function(req, res) {
     const idToken = req.headers.authorization.replace('Bearer ', '');
     const getDepthCharts = async () => {
         const dc = await db.sequelize.query(
-            `select * from database_development.depthcharts dc where dc.playerId in (select p.id from database_development.players p where p.Team = ${req.params.teamId})`,
+            // `select * from database_development.depthcharts dc where dc.playerId in (select p.id from database_development.players p where p.Team = ${req.params.teamId})`,
+            `select
+            p.First_Name, p.Last_Name, p.Position, 
+            p.Archetype, p.Overall, p.Height, 
+            p.Weight, p.Carrying, p.Agility, 
+            p.Catching, p.Zone_Coverage, p.Man_Coverage,
+            p.Football_IQ, p.Kick_Accuracy, p.Kick_Power,
+            p.Pass_Block, p.Pass_Rush, p.Punt_Accuracy,
+            p.Punt_Power, p.Route_Running, p.Run_Block,
+            p.Run_Defense, p.Speed, p.Strength,
+            p.Tackle, p.Throw_Power, p.Throw_Accuracy,
+            p.Injury, p.Stamina, p.Discipline,
+            p.Progression, p.Potential, p.Year
+            from Depthcharts dc INNER JOIN Players p on p.id = dc.playerId where p.Team = ${req.params.teamId};`,
             { type: QueryTypes.SELECT
         });
         // res.header('Access-Control-Allow-Origin', '*');

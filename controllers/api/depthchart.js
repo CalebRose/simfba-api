@@ -55,36 +55,53 @@ router.get('/depthchart/:teamId', function (req, res) {
 });
 
 router.post('/depthchart/:teamId', function (req, res) {
-  console.log('depthchart post route hit for team: ', req.params.teamId);
-  const playerIds = req.body.playerIds;
-  const starting = req.body.startings;
-  if (playerIds && starting) {
-    // console.log("playerId: ", playerId);
-    // console.log("starting: ", starting);
-    const setPositions = async () => {
-      const dc = await db.sequelize.query(
-        `INSERT INTO Depthcharts dc
-        SET ternary_position=${starting}
-        WHERE player_id = ${playerId};
-        `,
-        {
-          type: QueryTypes.INSERT,
-        }
-      );
+  // console.log('depthchart post route hit for team: ', req.params.teamId);
+  const idToken = req.headers.authorization.replace('Bearer ', '');
+  const arr = req.body;
+  const resArr = [];
 
-      if (dc) {
-        res.status(200).send(dc);
-      } else {
-        console.log('required values missing.');
-        res.status(400).send({});
-      }
-    };
-
-    setPositions();
-  } else {
-    console.log('required values missing.');
-    res.status(400).send();
+  const postDepthChartUpdates = async (queryString) => {
+    return await db.sequelize.query(queryString, { type: QueryTypes.UPDATE });
   }
+
+  const postDCUpdates = async () => {
+    if (arr.length > 0) {
+      await arr.map(async (x, index) => {
+        const queryStr = `UPDATE Depthcharts SET startingTernary = ${x.startingTernary} where playerId = ${x.playerId};`;
+        resArr[index] = await postDepthChartUpdates(queryStr);
+        
+      });
+    
+      db.sequelize.sync({ force: false }).then(() => {
+        if (resArr.length > 0) {
+          res.status(200).send(resArr);
+        } else { // this should never happen.
+          res.status(400).send({});
+        }
+      });
+    } else {
+      res.status(200).send([]);
+    }
+}
+
+  admin
+    .auth()
+    .verifyIdToken(idToken)
+    .then(function (decodedToken) {
+      const uid = decodedToken.uid;
+      console.log('Token decoded');
+      console.log('uid:');
+      console.log(uid);
+      // res.header('Access-Control-Allow-Origin', 'localhost:3000');
+      // res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+      // res.header('Access-Control-Allow-Headers', 'Content-Type');
+      postDCUpdates();
+    })
+    .catch(function (error) {
+      // Handle error
+      console.log('Token NOT decoded. Something went wrong. Sending 403.');
+      res.status(403);
+    });
 });
 
 module.exports = router;

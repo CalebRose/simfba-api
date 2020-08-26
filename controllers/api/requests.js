@@ -3,10 +3,22 @@ const db = require('../../models');
 
 const admin = require('firebase-admin');
 
-router.post('/request/:teamId/:username', function (req, res) {
+router.post('/request/:teamId', function (req, res) {
   const idToken = req.headers.authorization.replace('Bearer ', '');
   const user = req.body.username;
   const team = req.body.teamId;
+  console.log(user);
+  console.log(team);
+
+  const setRequest = async () => {
+    //
+    await db.Request.create({
+      TeamId: team,
+      User: user,
+      IsApproved: false,
+    });
+  };
+
   admin
     .auth()
     .verifyIdToken(idToken)
@@ -18,9 +30,12 @@ router.post('/request/:teamId/:username', function (req, res) {
       console.log('Token decoded');
       console.log('uid:');
       console.log(uid);
-      await db.requests.create({ teamId: team, user: user, isApproved: false });
+
+      setRequest();
     })
     .then((request) => {
       res.status(200).send(request);
     });
 });
+
+module.exports = router;

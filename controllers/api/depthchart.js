@@ -54,7 +54,7 @@ router.get('/depthchart/:teamId', function (req, res) {
     });
 });
 
-router.post('/depthchart/:teamId', function (req, res) {
+router.post('/depthchart/update/:teamId', function (req, res) {
   // console.log('depthchart post route hit for team: ', req.params.teamId);
   const idToken = req.headers.authorization.replace('Bearer ', '');
   const arr = req.body;
@@ -62,27 +62,27 @@ router.post('/depthchart/:teamId', function (req, res) {
 
   const postDepthChartUpdates = async (queryString) => {
     return await db.sequelize.query(queryString, { type: QueryTypes.UPDATE });
-  }
+  };
 
   const postDCUpdates = async () => {
     if (arr.length > 0) {
       await arr.map(async (x, index) => {
         const queryStr = `UPDATE Depthcharts SET startingTernary = ${x.startingTernary} where playerId = ${x.playerId};`;
         resArr[index] = await postDepthChartUpdates(queryStr);
-        
       });
-    
+
       db.sequelize.sync({ force: false }).then(() => {
         if (resArr.length > 0) {
           res.status(200).send(resArr);
-        } else { // this should never happen.
+        } else {
+          // this should never happen.
           res.status(400).send({});
         }
       });
     } else {
       res.status(200).send([]);
     }
-}
+  };
 
   admin
     .auth()

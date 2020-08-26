@@ -201,7 +201,7 @@ allFilePaths.forEach((pathNameObj) => {
     try {
         const filestring = getFileAsString(pathNameObj.fullpath);
         const keyNameStr = filestring.split(/\r?\n/, 1)[0];
-        const keyNames: string[] = keyNameStr.split(",").map(kn => kn.replace(" ", "_"));
+        const keyNames: string[] = keyNameStr.split(",").map(kn => kn.replace(" ", "_").replace("﻿",""));
         if (keyNames) {
             const rowData = filestring.split(/\r?\n/).slice(1);
             if (rowData.length > 0) {

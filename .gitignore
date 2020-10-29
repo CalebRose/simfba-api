@@ -6,3 +6,4 @@ scripts/js/**/*
 sequelize-data.json
 /seeders/**/*
 client/
+client-2/

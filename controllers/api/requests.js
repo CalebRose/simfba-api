@@ -1,6 +1,5 @@
 const router = require('express').Router();
 const db = require('../../models');
-
 const admin = require('firebase-admin');
 const { QueryTypes } = require('sequelize');
 
@@ -118,6 +117,51 @@ router.post('/requests/approve/:reqId', function (req, res) {
     });
 });
 
+router.post('/requests/revoke/:reqId', function (req, res) {
+  const idToken = req.headers.authorization.replace('Bearer ', '');
+  const requestId = req.body.reqId;
+
+  const revokeRequest = async () => {
+    const queryStr = `UPDATE teams 
+                      SET Coach = Null 
+                      WHERE id = ${requestId};`;
+    const approval = await db.sequelize.query(queryStr, {
+      type: QueryTypes.UPDATE,
+    });
+    db.sequelize.sync({ force: false }).then(() => {
+      if (approval) {
+        res.status(200).send(approval);
+      } else {
+        // this should never happen.
+        res.status(400).send({});
+      }
+    });
+  };
+
+  admin
+    .auth()
+    .verifyIdToken(idToken)
+    .then(function (decodedToken) {
+      // res.header('Access-Control-Allow-Origin', '*');
+      // res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+      // res.header('Access-Control-Allow-Headers', 'Content-Type');
+      const uid = decodedToken.uid;
+      console.log('Token decoded');
+      console.log('uid:');
+      console.log(uid);
+
+      revokeRequest();
+    })
+    .then((request) => {
+      res.status(200).send(request);
+    })
+    .catch(function (error) {
+      // Handle error
+      console.log('Token NOT decoded. Something went wrong. Sending 403.');
+      res.status(403);
+    });
+});
+
 router.delete('/request/reject', function (req, res) {
   const idToken = req.headers.authorization.replace('Bearer ', '');
   const reqId = req.body.reqId;
@@ -139,7 +183,7 @@ router.delete('/request/reject', function (req, res) {
       console.log('uid:');
       console.log(uid);
 
-      const reject = approveRequest();
+      const reject = rejectRequest();
       db.sequelize.sync({ force: false }).then(() => {
         if (reject) {
           res.status(200).send(reject);

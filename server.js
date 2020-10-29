@@ -21,13 +21,13 @@ const app = express();
 
 // Define middleware
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static('client/public'));
+app.use(express.static('client/simfba-interface/public'));
 app.use(express.json());
 
 app.use(routes);
 
 app.get('/:reqStr', function (req, res) {
-  res.sendFile(path.resolve(__dirname, 'client/public/' + req.params.reqStr));
+  res.sendFile(path.resolve(__dirname, 'client/simfba-interface/public/' + req.params.reqStr));
 });
 
 db.sequelize.sync({ force: true }).then(() => {

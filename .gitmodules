@@ -1,0 +1,3 @@
+[submodule "client/simfba-interface"]
+	path = client/simfba-interface
+	url = https://github.com/CalebRose/simfba-interface.git

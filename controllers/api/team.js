@@ -35,12 +35,14 @@ router.get('/teams', function (req, res) {
     });
 });
 
-router.get('/teams/coachedTeams', function(req,res) {
-  db.Team.findAll({where: {
-    Coach: {
-      [Op.not]: null
-    }
-  }}).then((teams) => {
+router.get('/teams/coachedTeams', function (req, res) {
+  db.Team.findAll({
+    where: {
+      Coach: {
+        [Op.not]: null,
+      },
+    },
+  }).then((teams) => {
     res.status(200).send(teams);
   });
 
@@ -48,30 +50,32 @@ router.get('/teams/coachedTeams', function(req,res) {
   console.log(idToken, 'idToken');
 
   admin
-  .auth()
-  .verifyIdToken(idToken)
-  .then(function (decodedToken) {
-    const uid = decodedToken.uid;
-    console.log('Token decoded');
-    console.log('uid:');
-    console.log(uid);
-    // res.header('Access-Control-Allow-Origin', 'localhost:3001');
-    // res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    // res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    db.Team.findAll({where: {
-      Coach: {
-        [Op.not]: null
-      }
-    }}).then((teams) => {
-      res.status(200).send(teams);
+    .auth()
+    .verifyIdToken(idToken)
+    .then(function (decodedToken) {
+      const uid = decodedToken.uid;
+      console.log('Token decoded');
+      console.log('uid:');
+      console.log(uid);
+      // res.header('Access-Control-Allow-Origin', 'localhost:3001');
+      // res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+      // res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+      db.Team.findAll({
+        where: {
+          Coach: {
+            [Op.not]: null,
+          },
+        },
+      }).then((teams) => {
+        res.status(200).send(teams);
+      });
+    })
+    .catch(function (error) {
+      // Handle error
+      console.log('Token NOT decoded. Something went wrong. Sending 403.');
+      res.status(403);
     });
-  })
-  .catch(function (error) {
-    // Handle error
-    console.log('Token NOT decoded. Something went wrong. Sending 403.');
-    res.status(403);
-  });
-})
+});
 
 router.post('/teams/assign/:teamId', function (req, res) {
   const idToken = req.headers.authorization.replace('Bearer ', '');
@@ -80,7 +84,7 @@ router.post('/teams/assign/:teamId', function (req, res) {
   const user = req.body.username;
 
   const approveRequest = async () => {
-    const queryStr = `UPDATE teams 
+    const queryStr = `UPDATE Teams 
                       SET Coach =  "${user}"
                       WHERE id = ${teamId};`;
     const approval = await db.sequelize.query(queryStr, {

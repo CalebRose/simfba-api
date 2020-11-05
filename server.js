@@ -27,11 +27,20 @@ app.use(express.json());
 app.use(routes);
 
 app.get('/:reqStr', function (req, res) {
-  res.sendFile(path.resolve(__dirname, 'client/simfba-interface/public/' + req.params.reqStr));
+  res.sendFile(
+    path.resolve(
+      __dirname,
+      'client/simfba-interface/public/' + req.params.reqStr
+    )
+  );
 });
 
-db.sequelize.sync({ force: true }).then(() => {
-  app.listen(PORT, () => {
-    console.log(`🌎  ==> API Server now listening on PORT ${PORT}!`);
-  });
+app.listen(PORT, () => {
+  console.log(`🌎  ==> API Server now listening on PORT ${PORT}!`);
 });
+
+// db.sequelize.sync({ force: true }).then(() => {
+//   app.listen(PORT, () => {
+//     console.log(`🌎  ==> API Server now listening on PORT ${PORT}!`);
+//   });
+// });

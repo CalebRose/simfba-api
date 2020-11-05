@@ -41,8 +41,8 @@ router.get('/requests', function (req, res) {
   const getRequests = async () => {
     const requests = await db.sequelize.query(
       `select r.id, r.TeamId, t.Team, t.Nickname, t.Abbr, t.Current_Conference, r.Username, r.IsApproved
-      from requests r
-      inner join teams t on r.TeamId = t.id
+      from Requests r
+      inner join Teams t on r.TeamId = t.id
       where IsApproved = 0;`,
       { type: QueryTypes.SELECT }
     );
@@ -77,7 +77,7 @@ router.post('/requests/approve/:reqId', function (req, res) {
   const requestId = req.body.reqId;
 
   const approveRequest = async () => {
-    const queryStr = `UPDATE requests 
+    const queryStr = `UPDATE Requests 
                       SET IsApproved = 1 
                       WHERE id = ${requestId};`;
     const approval = await db.sequelize.query(queryStr, {
@@ -122,7 +122,7 @@ router.post('/requests/revoke/:reqId', function (req, res) {
   const requestId = req.body.reqId;
 
   const revokeRequest = async () => {
-    const queryStr = `UPDATE teams 
+    const queryStr = `UPDATE Teams 
                       SET Coach = Null 
                       WHERE id = ${requestId};`;
     const approval = await db.sequelize.query(queryStr, {
@@ -167,7 +167,7 @@ router.delete('/request/reject', function (req, res) {
   const reqId = req.body.reqId;
 
   const rejectRequest = async () => {
-    const queryStr = `DELETE from requests where id = ${reqId}`;
+    const queryStr = `DELETE from Requests where id = ${reqId}`;
     return await db.sequelize.query(queryStr, { type: QueryTypes.UPDATE });
   };
 

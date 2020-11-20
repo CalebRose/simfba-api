@@ -164,11 +164,11 @@ router.post('/requests/revoke/:reqId', function (req, res) {
 
 router.delete('/request/reject', function (req, res) {
   const idToken = req.headers.authorization.replace('Bearer ', '');
-  const reqId = req.body.reqId;
+  const id = req.body.id;
 
   const rejectRequest = async () => {
-    const queryStr = `DELETE from Requests where id = ${reqId}`;
-    return await db.sequelize.query(queryStr, { type: QueryTypes.UPDATE });
+    const queryStr = `DELETE from Requests where id = ${id}`;
+    return await db.sequelize.query(queryStr, { type: QueryTypes.DELETE });
   };
 
   admin
@@ -186,7 +186,7 @@ router.delete('/request/reject', function (req, res) {
       const reject = rejectRequest();
       db.sequelize.sync({ force: false }).then(() => {
         if (reject) {
-          res.status(200).send(reject);
+          // res.status(200).send(reject);
         } else {
           // this should never happen.
           res.status(400).send({});

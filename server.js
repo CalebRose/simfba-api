@@ -1,13 +1,13 @@
-const path = require('path');
-const express = require('express');
-const routes = require('./controllers');
-const db = require('./models');
+const path = require("path");
+const express = require("express");
+const routes = require("./controllers");
+const db = require("./models");
 
-const admin = require('firebase-admin');
-const serviceAccount = require('./config/service-account-file.json');
+const admin = require("firebase-admin");
+const serviceAccount = require("./config/service-account-file.json");
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: 'https://simfba-interface.firebaseio.com',
+  databaseURL: "https://simfba-interface.firebaseio.com",
 });
 
 const PORT = process.env.PORT || 3001;
@@ -21,16 +21,16 @@ const app = express();
 
 // Define middleware
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static('client/simfba-interface/public'));
+app.use(express.static("client/simfba-interface/public"));
 app.use(express.json());
 
 app.use(routes);
 
-app.get('/:reqStr', function (req, res) {
+app.get("/:reqStr", function (req, res) {
   res.sendFile(
     path.resolve(
       __dirname,
-      'client/simfba-interface/public/' + req.params.reqStr
+      "client/simfba-interface/public/" + req.params.reqStr
     )
   );
 });

@@ -3,12 +3,12 @@ const express = require("express");
 const routes = require("./controllers");
 const db = require("./models");
 
-const admin = require("firebase-admin");
-const serviceAccount = require("./config/service-account-file.json");
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://simfba-interface.firebaseio.com",
-});
+// const admin = require("firebase-admin");
+// const serviceAccount = require("./config/service-account-file.json");
+// admin.initializeApp({
+//   credential: admin.credential.cert(serviceAccount),
+//   databaseURL: "https://simfba-interface.firebaseio.com",
+// });
 
 const PORT = process.env.PORT || 3001;
 const app = express();
@@ -38,9 +38,3 @@ app.get("/:reqStr", function (req, res) {
 app.listen(PORT, () => {
   console.log(`🌎  ==> API Server now listening on PORT ${PORT}!`);
 });
-
-// db.sequelize.sync({ force: true }).then(() => {
-//   app.listen(PORT, () => {
-//     console.log(`🌎  ==> API Server now listening on PORT ${PORT}!`);
-//   });
-// });
